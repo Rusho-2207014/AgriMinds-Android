@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <!-- Certificate requirements -->
+    <entry>
+        <key>certificate_min_rating</key>
+        <value>4.5</value>
+    </entry>
+    <entry>
+        <key>certificate_min_answers</key>
+        <value>10</value>
+    </entry>
+    
+    <!-- Feature toggles -->
+    <entry>
+        <key>enable_ai_answers</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>enable_notifications</key>
+        <value>true</value>
+    </entry>
+</defaultsMap>

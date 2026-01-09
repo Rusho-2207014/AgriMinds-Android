@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="expert_categories">
+        <item>Crop Disease</item>
+        <item>Soil Management</item>
+        <item>Pest Control</item>
+        <item>Irrigation</item>
+        <item>Fertilizer</item>
+        <item>Weather Related</item>
+        <item>Harvest Timing</item>
+        <item>Other</item>
+    </string-array>
+</resources>

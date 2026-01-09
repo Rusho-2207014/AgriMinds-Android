@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#212121">
+
+        <!-- User Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/ivUserAvatar"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_person"
+                android:background="@drawable/bg_circle"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvUserName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="User Name"
+                        android:textSize="14sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold" />
+
+                    <!-- User Type Badge -->
+                    <TextView
+                        android:id="@+id/tvUserTypeBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="EXPERT"
+                        android:textSize="9sp"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/bg_ai_badge"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:layout_marginStart="8dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvReplyDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Just now"
+                    android:textSize="11sp"
+                    android:textColor="#CCCCCC"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Reply Text -->
+        <TextView
+            android:id="@+id/tvReplyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This is a reply message..."
+            android:textSize="15sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Bengali Translation -->
+        <TextView
+            android:id="@+id/tvBengaliTranslation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="13sp"
+            android:textColor="#B3E5FC"
+            android:layout_marginTop="6dp"
+            android:lineSpacingExtra="2dp"
+            android:visibility="gone" />
+
+        <!-- Buttons Container -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnListenReply"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="🔊 Listen in Bangla"
+                android:textSize="12sp"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#4CAF50"
+                app:cornerRadius="18dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                app:icon="@null" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHideTranslationReply"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="🙈 Hide Translation"
+                android:textSize="12sp"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#FF9800"
+                app:cornerRadius="18dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                app:icon="@null" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

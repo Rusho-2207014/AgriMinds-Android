@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="#1E1E1E"
+    app:cardElevation="4dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Reply Badge -->
+        <TextView
+            android:id="@+id/tvReplyBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 replies"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:background="#F44336"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
+
+        <!-- Question Text -->
+        <TextView
+            android:id="@+id/tvQuestionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Question text here..."
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Farmer Name -->
+        <TextView
+            android:id="@+id/tvFarmerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Asked by: Farmer Name"
+            android:textSize="12sp"
+            android:textColor="#CCCCCC"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Date -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Jan 02, 2026"
+            android:textSize="12sp"
+            android:textColor="#AAAAAA"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Answer Preview -->
+        <TextView
+            android:id="@+id/tvAnswerPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your answer preview..."
+            android:textSize="14sp"
+            android:textColor="#E0E0E0"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Rating Display -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rating: "
+                android:textSize="12sp"
+                android:textColor="#CCCCCC" />
+
+            <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.0★"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#FFC107" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

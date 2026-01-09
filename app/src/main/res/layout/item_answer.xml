@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#212121">
+
+        <!-- Expert Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/ivExpertAvatar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_expert"
+                android:background="@drawable/bg_circle"
+                android:scaleType="centerCrop" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/tvExpertName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dr. Expert Name"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold" />
+
+                    <!-- Average Rating beside name -->
+                    <TextView
+                        android:id="@+id/tvAverageRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:gravity="center_vertical"
+                        android:text="(4.5★)"
+                        android:textSize="14sp"
+                        android:textColor="#FFD700"
+                        android:layout_marginStart="8dp"
+                        android:visibility="gone" />
+
+                    <!-- AI Badge -->
+                    <TextView
+                        android:id="@+id/tvAIBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AI"
+                        android:textSize="10sp"
+                        android:textColor="@android:color/white"
+                        android:background="@drawable/bg_ai_badge"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:paddingTop="2dp"
+                        android:paddingBottom="2dp"
+                        android:layout_marginStart="8dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvAnswerDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2 hours ago"
+                    android:textSize="12sp"
+                    android:textColor="#CCCCCC"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Rating Section -->
+            <LinearLayout
+                android:id="@+id/layoutRatingSection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Tap to change hint -->
+                <TextView
+                    android:id="@+id/tvTapToChange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(tap to change)"
+                    android:textSize="10sp"
+                    android:textColor="#9E9E9E"
+                    android:layout_marginBottom="4dp"
+                    android:visibility="gone" />
+
+                <!-- Give Rating Button (Yellow) -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGiveRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="Give Rating"
+                    android:textSize="13sp"
+                    android:textColor="#212121"
+                    android:backgroundTint="#FFC107"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    app:cornerRadius="8dp" />
+
+                <!-- Stars and Done Container (Initially Hidden) -->
+                <LinearLayout
+                    android:id="@+id/layoutStarsContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
+
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:numStars="5"
+                        android:stepSize="1"
+                        android:isIndicator="false"
+                        android:rating="0"
+                        android:scaleX="1.0"
+                        android:scaleY="1.0" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDoneRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:text="Done"
+                            android:textSize="14sp"
+                            android:textColor="#FFFFFF"
+                            android:backgroundTint="#4CAF50"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            app:cornerRadius="8dp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnUndoRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:text="Undo"
+                            android:textSize="14sp"
+                            android:textColor="#FFFFFF"
+                            android:backgroundTint="#FF5722"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="20dp"
+                            android:layout_marginStart="8dp"
+                            app:cornerRadius="8dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Answer Text -->
+        <TextView
+            android:id="@+id/tvAnswerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This is the answer to your question..."
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:lineSpacingExtra="4dp" />
+
+        <!-- Bengali Translation -->
+        <TextView
+            android:id="@+id/tvBengaliTranslation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="14sp"
+            android:textColor="#B3E5FC"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="4dp"
+            android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPlayAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="▶ Play Voice"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4CAF50"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            app:icon="@android:drawable/ic_media_play"
+            app:iconTint="#FFFFFF" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnListen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="🔊 Listen in Bangla"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#2196F3"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            app:icon="@android:drawable/ic_lock_silent_mode_off"
+            app:iconTint="#FFFFFF" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnHideTranslation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
+            android:text="🙈 Hide Translation"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#FF9800"
+            android:visibility="gone"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            app:icon="@null" />
+    </LinearLayout>
+
+        <!-- Replies Section -->
+        <LinearLayout
+            android:id="@+id/layoutReplies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#444444"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tvRepliesCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3 replies"
+                android:textSize="13sp"
+                android:textColor="#4CAF50"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewReplies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false" />
+
+            <LinearLayout
+                android:id="@+id/layoutReplyInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Reply..."
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusTopStart="16dp"
+                    app:boxCornerRadiusTopEnd="16dp"
+                    app:boxCornerRadiusBottomStart="16dp"
+                    app:boxCornerRadiusBottomEnd="16dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etReply"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="3"
+                        android:textColor="#FFFFFF"
+                        android:inputType="textMultiLine|textCapSentences" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSendReply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Send"
+                    android:layout_marginStart="8dp"
+                    app:cornerRadius="16dp"
+                    style="@style/Widget.Material3.Button" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

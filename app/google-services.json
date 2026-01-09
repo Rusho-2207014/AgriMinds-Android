@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "64528895950",
+    "project_id": "agriminds-81f4e",
+    "storage_bucket": "agriminds-81f4e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64528895950:android:076f2fc3872a7eaa38a59f",
+        "android_client_info": {
+          "package_name": "com.agriminds"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFn8rx_UPfPKazPo_KOX2Xx-1IUcnYK6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
