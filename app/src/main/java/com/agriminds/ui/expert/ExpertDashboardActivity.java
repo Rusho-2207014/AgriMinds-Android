@@ -38,6 +38,8 @@ import com.agriminds.data.entity.User;
 import com.agriminds.ui.adapters.ExpertMyAnswersAdapter;
 import com.agriminds.ui.adapters.ExpertCommunityAdapter;
 import com.agriminds.ui.adapters.LatestRatingsAdapter;
+import com.agriminds.ui.cropchart.CropChartAdapter;
+import com.agriminds.data.entity.CropChart;
 import com.agriminds.ui.login.LoginActivity;
 import com.google.android.material.button.MaterialButton;
 
@@ -75,7 +77,7 @@ public class ExpertDashboardActivity extends AppCompatActivity {
     // Community Tab
     private RecyclerView recyclerViewCommunity;
     private TextView emptyCommunity;
-    private ExpertCommunityAdapter communityAdapter;
+    private CropChartAdapter cropChartAdapter;
 
     // Rating Tab
     private TextView tvAverageRatingValue, tvTotalAnswers, tvRatedAnswers, emptyRatings;
@@ -173,8 +175,8 @@ public class ExpertDashboardActivity extends AppCompatActivity {
         recyclerViewCommunity = findViewById(R.id.recyclerViewCommunity);
         emptyCommunity = findViewById(R.id.emptyCommunity);
         recyclerViewCommunity.setLayoutManager(new LinearLayoutManager(this));
-        communityAdapter = new ExpertCommunityAdapter(new ArrayList<>(), this, expertId, expertName);
-        recyclerViewCommunity.setAdapter(communityAdapter);
+        cropChartAdapter = new CropChartAdapter(new ArrayList<>(), this, true);
+        recyclerViewCommunity.setAdapter(cropChartAdapter);
 
         // Rating Tab
         tvAverageRatingValue = findViewById(R.id.tvAverageRatingValue);
@@ -414,40 +416,15 @@ public class ExpertDashboardActivity extends AppCompatActivity {
     }
 
     private void loadCommunity() {
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            // Get questions this expert has answered
-            List<ExpertAnswer> myAnswers = database.expertAnswerDao().getAnswersByExpert(expertId);
-            Set<Integer> myQuestionIds = new HashSet<>();
-            for (ExpertAnswer answer : myAnswers) {
-                myQuestionIds.add(answer.getQuestionId());
+        database.cropChartDao().getAllSharedCropCharts().observe(this, cropCharts -> {
+            if (cropCharts != null && !cropCharts.isEmpty()) {
+                recyclerViewCommunity.setVisibility(View.VISIBLE);
+                emptyCommunity.setVisibility(View.GONE);
+                cropChartAdapter.updateData(cropCharts);
+            } else {
+                recyclerViewCommunity.setVisibility(View.GONE);
+                emptyCommunity.setVisibility(View.VISIBLE);
             }
-
-            // Get all answers for those questions (from all experts and AI)
-            List<ExpertAnswer> communityAnswers = new ArrayList<>();
-            Map<Integer, Question> questionsMap = new HashMap<>();
-
-            for (Integer questionId : myQuestionIds) {
-                Question question = database.questionDao().getQuestionById(questionId);
-                if (question != null) {
-                    questionsMap.put(questionId, question);
-                    List<ExpertAnswer> allAnswers = database.expertAnswerDao().getAnswersByQuestion(questionId);
-                    if (allAnswers != null && !allAnswers.isEmpty()) {
-                        communityAnswers.addAll(allAnswers);
-                    }
-                }
-            }
-
-            Map<Integer, Question> finalQuestionsMap = questionsMap;
-            runOnUiThread(() -> {
-                if (communityAnswers.isEmpty()) {
-                    recyclerViewCommunity.setVisibility(View.GONE);
-                    emptyCommunity.setVisibility(View.VISIBLE);
-                } else {
-                    recyclerViewCommunity.setVisibility(View.VISIBLE);
-                    emptyCommunity.setVisibility(View.GONE);
-                    communityAdapter.updateAnswers(communityAnswers, finalQuestionsMap);
-                }
-            });
         });
     }
 
@@ -712,21 +689,6 @@ public class ExpertDashboardActivity extends AppCompatActivity {
         super.onResume();
         // Reload current tab data
         switchTab(currentTab);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
-            logout();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private void logout() {

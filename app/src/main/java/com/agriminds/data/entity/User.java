@@ -24,4 +24,9 @@ public class User {
     public String specialization;
     public String experience;
     public String organization;
+
+    // Stats
+    public int totalQuestionsAsked;
+    public int totalAnswersReceived;
+    public int totalChartsShared;
 }

@@ -60,6 +60,50 @@
                 android:gravity="top"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Image Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📷 Camera"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_gallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="🖼️ Gallery"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+            
+            <TextView
+                android:id="@+id/tv_image_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text=""
+                android:textColor="#4CAF50"
+                android:textSize="12sp"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_question_preview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp"
+            android:background="#F0F0F0"/>
+
         <!-- Voice Recording Section -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -92,6 +136,33 @@
                 android:layout_marginStart="8dp"
                 android:text=""
                 android:textColor="#F44336"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <!-- Voice to Text Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_voice_to_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🗣️ Voice to Text"
+                style="@style/Widget.Material3.Button.OutlinedButton"/>
+            
+            <TextView
+                android:id="@+id/tv_voice_to_text_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text=""
+                android:textColor="#2196F3"
                 android:textStyle="bold"
                 android:visibility="gone"/>
         </LinearLayout>

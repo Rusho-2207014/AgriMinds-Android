@@ -26,4 +26,13 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE id = :userId LIMIT 1")
     User getUserById(int userId);
+
+    @Query("UPDATE users SET totalQuestionsAsked = totalQuestionsAsked + 1 WHERE id = :userId")
+    void incrementQuestionsAsked(int userId);
+
+    @Query("UPDATE users SET totalAnswersReceived = totalAnswersReceived + 1 WHERE id = :userId")
+    void incrementAnswersReceived(int userId);
+
+    @Query("UPDATE users SET totalChartsShared = totalChartsShared + 1 WHERE id = :userId")
+    void incrementChartsShared(int userId);
 }

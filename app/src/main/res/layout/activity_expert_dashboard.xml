@@ -125,13 +125,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="👥"
+                android:text="🌾"
                 android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Community"
+                android:text="Crop Charts"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#CCCCCC"
@@ -285,7 +285,7 @@
                 android:id="@+id/emptyCommunity"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="No community discussions yet"
+                android:text="No farmer crop charts shared yet"
                 android:textSize="18sp"
                 android:textColor="#757575"
                 android:gravity="center"

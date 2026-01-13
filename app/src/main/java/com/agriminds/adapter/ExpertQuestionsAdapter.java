@@ -274,6 +274,9 @@ public class ExpertQuestionsAdapter extends RecyclerView.Adapter<ExpertQuestions
             // Increment answer count
             database.questionDao().incrementAnswerCount(question.getId());
 
+            // Increment persistent answer count for farmer
+            database.userDao().incrementAnswersReceived(question.getFarmerId());
+
             // Create unviewed answer record for farmer
             AnswerView answerView = new AnswerView();
             answerView.setAnswerId((int) answerId);

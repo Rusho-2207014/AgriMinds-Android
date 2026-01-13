@@ -38,11 +38,15 @@ import java.util.concurrent.Executors;
 public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.ViewHolder> {
 
     private static final String[] GEMINI_API_KEYS = {
-            "AIzaSyCsP16njQFn5rXz02jHsM1_QJBH4dDWq6M",
-            "AIzaSyDdqGQy-FneDjZ4IaWBIELpRrWdPNnFW5A",
-            "AIzaSyD9UdEZSlZR5Q8jl8n4DfxoLTj5jSz4t_E"
+            "AIzaSyC90368I-saYiOPOd9DH5Ean3NNS1K8RQo",
+            "AIzaSyAx-IxNj1EbbOAKIiD8PiTF6t6EhQml4zY",
+            "AIzaSyDvTbDitI61UdRrMMkLO2GXc8VrNSUeK9M"
     };
     private static int currentKeyIndex = 0;
+    private static final int DAILY_QUOTA_LIMIT = 60; // gemini-2.5-flash: 20/day per key × 3 keys
+    private static final String QUOTA_PREFS = "gemini_quota";
+    private static final String QUOTA_COUNT_KEY = "request_count";
+    private static final String QUOTA_DATE_KEY = "last_reset_date";
 
     private List<Question> questions;
     private Context context;
@@ -93,23 +97,37 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
         // Load image if exists
         if (question.getImageUrl() != null && !question.getImageUrl().isEmpty()) {
             holder.ivQuestionImage.setVisibility(View.VISIBLE);
-            Glide.with(context)
-                    .load(question.getImageUrl())
-                    .into(holder.ivQuestionImage);
+            // Check if it's a local file path or URL
+            if (question.getImageUrl().startsWith("http")) {
+                Glide.with(context)
+                        .load(question.getImageUrl())
+                        .into(holder.ivQuestionImage);
+            } else {
+                // Local file path
+                Glide.with(context)
+                        .load(new java.io.File(question.getImageUrl()))
+                        .into(holder.ivQuestionImage);
+            }
         } else {
             holder.ivQuestionImage.setVisibility(View.GONE);
         }
 
         // Show voice play button if question has audio
         if (question.getAudioPath() != null && !question.getAudioPath().isEmpty()) {
-            holder.btnPlayMyVoice.setVisibility(View.VISIBLE);
-            holder.btnPlayMyVoice.setOnClickListener(v -> {
-                holder.btnPlayMyVoice.setText("⏸️ Playing...");
-                audioPlayerManager.play(question.getAudioPath(), () -> {
-                    ((android.app.Activity) context)
-                            .runOnUiThread(() -> holder.btnPlayMyVoice.setText("▶️ Play My Voice"));
+            // Check if audio file actually exists
+            File audioFile = new File(question.getAudioPath());
+            if (audioFile.exists()) {
+                holder.btnPlayMyVoice.setVisibility(View.VISIBLE);
+                holder.btnPlayMyVoice.setOnClickListener(v -> {
+                    holder.btnPlayMyVoice.setText("⏸️ Playing...");
+                    audioPlayerManager.play(question.getAudioPath(), () -> {
+                        ((android.app.Activity) context)
+                                .runOnUiThread(() -> holder.btnPlayMyVoice.setText("▶️ Play My Voice"));
+                    });
                 });
-            });
+            } else {
+                holder.btnPlayMyVoice.setVisibility(View.GONE);
+            }
         } else {
             holder.btnPlayMyVoice.setVisibility(View.GONE);
         }
@@ -124,6 +142,11 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
 
         // AI Answer button
         holder.btnGetAIAnswer.setOnClickListener(v -> {
+            int used = getTodayRequestCount();
+            int remaining = getRemainingQuota();
+            Toast.makeText(context,
+                    "AI Quota: " + used + "/" + DAILY_QUOTA_LIMIT + " used | " + remaining + " remaining",
+                    Toast.LENGTH_SHORT).show();
             generateAIAnswer(question);
         });
 
@@ -136,6 +159,35 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
     @Override
     public int getItemCount() {
         return questions.size();
+    }
+
+    // Quota tracking methods
+    private int getTodayRequestCount() {
+        android.content.SharedPreferences prefs = context.getSharedPreferences(QUOTA_PREFS, Context.MODE_PRIVATE);
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date());
+        String lastDate = prefs.getString(QUOTA_DATE_KEY, "");
+
+        if (!today.equals(lastDate)) {
+            // New day, reset counter
+            prefs.edit()
+                    .putInt(QUOTA_COUNT_KEY, 0)
+                    .putString(QUOTA_DATE_KEY, today)
+                    .apply();
+            return 0;
+        }
+
+        return prefs.getInt(QUOTA_COUNT_KEY, 0);
+    }
+
+    private void incrementRequestCount() {
+        android.content.SharedPreferences prefs = context.getSharedPreferences(QUOTA_PREFS, Context.MODE_PRIVATE);
+        int currentCount = getTodayRequestCount();
+        prefs.edit().putInt(QUOTA_COUNT_KEY, currentCount + 1).apply();
+        android.util.Log.d("GeminiQuota", "API requests today: " + (currentCount + 1) + "/" + DAILY_QUOTA_LIMIT);
+    }
+
+    private int getRemainingQuota() {
+        return DAILY_QUOTA_LIMIT - getTodayRequestCount();
     }
 
     public void updateQuestions(List<Question> newQuestions) {
@@ -222,36 +274,33 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
                 JSONObject content = new JSONObject();
                 JSONArray parts = new JSONArray();
 
-                // Check if this is a voice question
-                if ("[Voice Question]".equals(question.getQuestionText())) {
-                    // Voice question without transcription - provide general advice
-                    android.util.Log.d("GeminiAI", "Voice question detected (no transcription available)");
+                // Always use the actual question text (from typing or voice-to-text)
+                String actualQuestionText = question.getQuestionText();
 
-                    JSONObject textPart = new JSONObject();
-                    textPart.put("text",
-                            "You are an agricultural expert assistant. A farmer has submitted a voice question but the speech-to-text transcription is not available. "
-                                    +
-                                    "Provide helpful, general agricultural advice covering common topics like: " +
-                                    "1) Proper irrigation and water management, " +
-                                    "2) Common pest identification and control, " +
-                                    "3) Soil health and fertilization basics, " +
-                                    "4) Seasonal crop care tips. " +
-                                    "Keep the answer concise (4-6 sentences), actionable, and suitable for farmers. " +
-                                    "Encourage them to consult with local experts for specific issues.");
-                    parts.put(textPart);
-                } else {
-                    // Text-based question
-                    JSONObject textPart = new JSONObject();
-                    String promptText = "You are an agricultural expert assistant. A farmer has asked: \""
-                            + question.getQuestionText()
-                            + "\"\n\n" +
-                            "Provide a helpful, practical answer about agriculture, crop management, pest control, or farming techniques. "
-                            +
-                            "Keep the answer concise (3-5 sentences), actionable, and suitable for farmers. " +
-                            "Focus on practical advice they can implement.";
-                    textPart.put("text", promptText);
-                    parts.put(textPart);
-                }
+                // Create the prompt based on the actual question text
+                JSONObject textPart = new JSONObject();
+                String promptText = "You are a friendly agricultural expert assistant. A farmer has asked: \""
+                        + actualQuestionText
+                        + "\"\n\n" +
+                        "Instructions:\n" +
+                        "1. If this is a greeting (like 'hello', 'hi', 'how are you', 'kemon acho', etc.), respond warmly and ask how you can help them today.\n"
+                        +
+                        "2. If this is a casual question about yourself, respond politely and redirect to agricultural topics.\n"
+                        +
+                        "3. If this is an agricultural question, provide helpful, practical advice about farming, crops, pest control, or agricultural techniques.\n"
+                        +
+                        "4. IMPORTANT LANGUAGE RULES:\n" +
+                        "   - If question is in English → Respond in English\n" +
+                        "   - If question is in Bengali script (বাংলা) → Respond in Bengali script\n" +
+                        "   - If question is in Banglish (Bengali words written in English letters like 'kivabe', 'kemon', 'dhan chash') → Respond in Bengali script (বাংলা)\n"
+                        +
+                        "   - NEVER respond in Banglish, only understand it\n" +
+                        "5. Keep answers concise (3-5 sentences), friendly, and actionable for farmers.\n" +
+                        "6. For greetings and casual chat, keep it brief (1-2 sentences) before asking how to help.";
+                textPart.put("text", promptText);
+                parts.put(textPart);
+
+                android.util.Log.d("GeminiAI", "Using question text: " + actualQuestionText);
 
                 content.put("parts", parts);
                 contents.put(content);
@@ -279,8 +328,7 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
                         conn.setReadTimeout(30000);
 
                         android.util.Log.d("GeminiAI",
-                                "Sending request to Gemini API (" + modelName + ") with key #" + (currentKeyIndex + 1)
-                                        + "...");
+                                "Sending request to Gemini API with key #" + (currentKeyIndex + 1) + "...");
 
                         OutputStream os = conn.getOutputStream();
                         os.write(requestJson.toString().getBytes());
@@ -290,6 +338,23 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
                         int responseCode = conn.getResponseCode();
                         android.util.Log.d("GeminiAI",
                                 "Response code: " + responseCode + " (Key #" + (currentKeyIndex + 1) + ")");
+
+                        // Read error response if not successful
+                        if (responseCode != 200) {
+                            try {
+                                BufferedReader errorReader = new BufferedReader(
+                                        new InputStreamReader(conn.getErrorStream()));
+                                StringBuilder errorResponse = new StringBuilder();
+                                String errorLine;
+                                while ((errorLine = errorReader.readLine()) != null) {
+                                    errorResponse.append(errorLine);
+                                }
+                                errorReader.close();
+                                android.util.Log.e("GeminiAI", "Error response: " + errorResponse.toString());
+                            } catch (Exception ex) {
+                                android.util.Log.e("GeminiAI", "Could not read error response");
+                            }
+                        }
 
                         if (responseCode == 200) {
                             android.util.Log.d("GeminiAI", "Success! Reading response...");
@@ -311,17 +376,27 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
                                     .getJSONObject(0)
                                     .getString("text");
 
-                            android.util.Log.d("GeminiAI", "AI answer generated successfully");
+                            android.util.Log.d("GeminiAI", "AI answer generated successfully: " + aiAnswerText);
+
+                            // Increment quota counter on success
+                            incrementRequestCount();
+
                             success = true;
                         } else if (responseCode == 429) {
                             // Quota exceeded, try next key
                             android.util.Log.d("GeminiAI",
                                     "Quota exceeded for key #" + (currentKeyIndex + 1) + ", switching to next key");
                             currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
+                        } else if (responseCode == 403) {
+                            // Forbidden - API key issue, try next key
+                            android.util.Log.d("GeminiAI",
+                                    "Forbidden for key #" + (currentKeyIndex + 1) + ", switching to next key");
+                            currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
                         } else {
-                            // Other error
-                            android.util.Log.e("GeminiAI", "API returned error code: " + responseCode);
-                            break;
+                            // Other error, try next key
+                            android.util.Log.e("GeminiAI",
+                                    "Error code " + responseCode + " for key #" + (currentKeyIndex + 1));
+                            currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
                         }
                     } catch (Exception e) {
                         android.util.Log.e("GeminiAI",
@@ -334,10 +409,17 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
 
                 // Use fallback if all keys failed
                 if (aiAnswerText == null) {
-                    aiAnswerText = "Thank you for your question about '" + question.getQuestionText() + "'. " +
-                            "While I'm currently unable to provide a detailed response, " +
-                            "our expert team will review your question and provide comprehensive guidance soon. " +
-                            "In the meantime, ensure proper care and monitoring of your crops.";
+                    int requestsToday = getTodayRequestCount();
+                    int remaining = getRemainingQuota();
+
+                    aiAnswerText = "⚠️ AI Service Temporarily Unavailable\n\n" +
+                            "Daily quota reached (" + requestsToday + "/" + DAILY_QUOTA_LIMIT + " requests used).\n" +
+                            "Your question about '" + question.getQuestionText() + "' has been saved and " +
+                            "our agricultural experts will provide a detailed answer soon.\n\n" +
+                            "✨ AI service resets at 2:00 PM Bangladesh time daily.\n" +
+                            "Thank you for your patience!";
+                    android.util.Log.w("GeminiAI", "All API keys exhausted (" + requestsToday + "/" + DAILY_QUOTA_LIMIT
+                            + ") - using fallback message");
                 }
 
                 // Save AI answer to database
@@ -454,6 +536,89 @@ public class MyQuestionsAdapter extends RecyclerView.Adapter<MyQuestionsAdapter.
                 android.util.Log.e("TTS", "TTS initialization failed");
             }
         });
+    }
+
+    private String transcribeAudio(File audioFile) {
+        try {
+            android.util.Log.d("Transcription", "Starting audio transcription...");
+
+            // Read audio file
+            byte[] audioBytes = readAudioFile(audioFile);
+            String base64Audio = android.util.Base64.encodeToString(audioBytes, android.util.Base64.NO_WRAP);
+
+            // Use Google Cloud Speech-to-Text API
+            String apiKey = GEMINI_API_KEYS[0]; // Reuse Gemini API key for Google services
+            URL url = new URL("https://speech.googleapis.com/v1/speech:recognize?key=" + apiKey);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(30000);
+            conn.setReadTimeout(30000);
+
+            // Create request JSON
+            JSONObject requestJson = new JSONObject();
+            JSONObject config = new JSONObject();
+            config.put("encoding", "LINEAR16");
+            config.put("sampleRateHertz", 16000);
+            config.put("languageCode", "en-US"); // Change to "bn-BD" for Bengali if needed
+            config.put("enableAutomaticPunctuation", true);
+
+            JSONObject audio = new JSONObject();
+            audio.put("content", base64Audio);
+
+            requestJson.put("config", config);
+            requestJson.put("audio", audio);
+
+            android.util.Log.d("Transcription", "Sending request to Google Speech API...");
+
+            OutputStream os = conn.getOutputStream();
+            os.write(requestJson.toString().getBytes());
+            os.flush();
+            os.close();
+
+            int responseCode = conn.getResponseCode();
+            android.util.Log.d("Transcription", "Response code: " + responseCode);
+
+            if (responseCode == 200) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line);
+                }
+                br.close();
+
+                android.util.Log.d("Transcription", "Response: " + response.toString());
+
+                JSONObject responseJson = new JSONObject(response.toString());
+                if (responseJson.has("results") && responseJson.getJSONArray("results").length() > 0) {
+                    String transcript = responseJson.getJSONArray("results")
+                            .getJSONObject(0)
+                            .getJSONArray("alternatives")
+                            .getJSONObject(0)
+                            .getString("transcript");
+
+                    android.util.Log.d("Transcription", "Successfully transcribed: " + transcript);
+                    return transcript;
+                }
+            } else {
+                android.util.Log.e("Transcription", "API error: " + responseCode);
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+                StringBuilder errorResponse = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    errorResponse.append(line);
+                }
+                br.close();
+                android.util.Log.e("Transcription", "Error response: " + errorResponse.toString());
+            }
+
+        } catch (Exception e) {
+            android.util.Log.e("Transcription", "Error transcribing audio: " + e.getMessage(), e);
+        }
+
+        return null;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

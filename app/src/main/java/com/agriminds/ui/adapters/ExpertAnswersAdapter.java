@@ -39,9 +39,9 @@ public class ExpertAnswersAdapter extends RecyclerView.Adapter<ExpertAnswersAdap
 
     // Multiple API keys for rotation (60+ requests/day instead of 20)
     private static final String[] GEMINI_API_KEYS = {
-            "AIzaSyBgcPsiq9SfdmUuOb6KgQiwawOTSp1tXH0",
-            "AIzaSyCBbcNjEG-7dlNWuHuPCgXMCjeoZZrrE8U",
-            "AIzaSyD7scjKl6K1m0khEb5OSRlPN4NoBzwcFCs"
+            "AIzaSyC90368I-saYiOPOd9DH5Ean3NNS1K8RQo",
+            "AIzaSyAx-IxNj1EbbOAKIiD8PiTF6t6EhQml4zY",
+            "AIzaSyDvTbDitI61UdRrMMkLO2GXc8VrNSUeK9M"
     };
     private static int currentKeyIndex = 0;
     private List<ExpertAnswer> answers;
@@ -602,6 +602,8 @@ public class ExpertAnswersAdapter extends RecyclerView.Adapter<ExpertAnswersAdap
                                     "User's follow-up question/reply: \"" + userReplyText + "\"\n\n" +
                                     "Provide a helpful, concise response (2-4 sentences) addressing their follow-up question. "
                                     +
+                                    "IMPORTANT: Respond in the SAME language as the user's reply (English if reply is in English, Bengali if in Bengali). "
+                                    +
                                     "Be conversational and helpful.");
 
                     parts.put(textPart);
@@ -637,6 +639,24 @@ public class ExpertAnswersAdapter extends RecyclerView.Adapter<ExpertAnswersAdap
                             android.util.Log.d("GeminiAI", "AI reply response code: " + responseCode + " (Key #"
                                     + (currentKeyIndex + 1) + ")");
 
+                            // Read error response if not successful
+                            if (responseCode != 200) {
+                                try {
+                                    BufferedReader errorReader = new BufferedReader(
+                                            new InputStreamReader(conn.getErrorStream()));
+                                    StringBuilder errorResponse = new StringBuilder();
+                                    String errorLine;
+                                    while ((errorLine = errorReader.readLine()) != null) {
+                                        errorResponse.append(errorLine);
+                                    }
+                                    errorReader.close();
+                                    android.util.Log.e("GeminiAI",
+                                            "AI reply error response: " + errorResponse.toString());
+                                } catch (Exception ex) {
+                                    android.util.Log.e("GeminiAI", "Could not read error response");
+                                }
+                            }
+
                             if (responseCode == 200) {
                                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                                 StringBuilder response = new StringBuilder();
@@ -661,9 +681,16 @@ public class ExpertAnswersAdapter extends RecyclerView.Adapter<ExpertAnswersAdap
                                 android.util.Log.d("GeminiAI",
                                         "Quota exceeded for key #" + (currentKeyIndex + 1) + ", switching to next key");
                                 currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
+                            } else if (responseCode == 403) {
+                                // Forbidden - API key issue, try next key
+                                android.util.Log.d("GeminiAI",
+                                        "Forbidden for key #" + (currentKeyIndex + 1) + ", switching to next key");
+                                currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
                             } else {
-                                // Other error, don't retry
-                                break;
+                                // Other error, try next key
+                                android.util.Log.e("GeminiAI",
+                                        "Error code " + responseCode + " for key #" + (currentKeyIndex + 1));
+                                currentKeyIndex = (currentKeyIndex + 1) % GEMINI_API_KEYS.length;
                             }
                         } catch (Exception e) {
                             android.util.Log.e("GeminiAI",

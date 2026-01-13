@@ -5,10 +5,8 @@ import android.app.Application;
 import androidx.lifecycle.LiveData;
 
 import com.agriminds.data.dao.ListingDao;
-import com.agriminds.data.dao.MarketPriceDao;
 import com.agriminds.data.dao.UserDao;
 import com.agriminds.data.entity.Listing;
-import com.agriminds.data.entity.MarketPrice;
 import com.agriminds.data.entity.User;
 
 import java.util.List;
@@ -16,30 +14,20 @@ import java.util.List;
 public class AgrimindsRepository {
 
     private UserDao userDao;
-    private MarketPriceDao marketPriceDao;
     private ListingDao listingDao;
-    private LiveData<List<MarketPrice>> allPrices;
     private LiveData<List<Listing>> allListings;
 
     public AgrimindsRepository(Application application) {
         AppDatabase db = AppDatabase.getDatabase(application);
         userDao = db.userDao();
-        marketPriceDao = db.marketPriceDao();
         listingDao = db.listingDao();
-        allPrices = marketPriceDao.getAllPrices();
         allListings = listingDao.getAllActiveListings();
     }
 
     public AgrimindsRepository(AppDatabase db) {
         userDao = db.userDao();
-        marketPriceDao = db.marketPriceDao();
         listingDao = db.listingDao();
-        allPrices = marketPriceDao.getAllPrices();
         allListings = listingDao.getAllActiveListings();
-    }
-
-    public LiveData<List<MarketPrice>> getAllPrices() {
-        return allPrices;
     }
 
     public LiveData<List<Listing>> getAllListings() {

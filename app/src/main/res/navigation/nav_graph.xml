@@ -12,18 +12,20 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_market"
-        android:name="com.agriminds.ui.market.MarketFragment"
-        android:label="Market"
-        tools:layout="@layout/fragment_market" />
+        android:id="@+id/navigation_weather"
+        android:name="com.agriminds.ui.weather.WeatherFragment"
+        android:label="Weather"
+        tools:layout="@layout/fragment_weather" />
 
     <!-- Placeholders for others -->
     <fragment
         android:id="@+id/navigation_community"
-        android:name="com.agriminds.ui.dashboard.DashboardFragment"
-        android:label="Community" />
+        android:name="com.agriminds.ui.cropchart.CropChartFragment"
+        android:label="Crop Charts"
+        tools:layout="@layout/fragment_crop_chart" />
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="com.agriminds.ui.dashboard.DashboardFragment"
-        android:label="Profile" />
+        android:name="com.agriminds.ui.profile.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

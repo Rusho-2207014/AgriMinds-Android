@@ -1,8 +1,10 @@
 package com.agriminds;
 
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,6 +16,7 @@ import com.agriminds.data.AppDatabase;
 import com.agriminds.data.entity.AnswerView;
 import com.agriminds.data.entity.ExpertAnswer;
 import com.agriminds.ui.adapters.ExpertAnswersAdapter;
+import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 
@@ -33,6 +36,7 @@ public class AnswersActivity extends AppCompatActivity {
     private TextView tvAnswersLabel;
     private TextView tvOthersAnswersLabel;
     private MaterialButton btnPlayQuestionVoice;
+    private ImageView ivQuestionImage;
     private AppDatabase database;
     private int questionId;
     private int currentUserId;
@@ -64,13 +68,16 @@ public class AnswersActivity extends AppCompatActivity {
         tvAnswersLabel = findViewById(R.id.tvAnswersLabel);
         tvOthersAnswersLabel = findViewById(R.id.tvOthersAnswersLabel);
         btnPlayQuestionVoice = findViewById(R.id.btnPlayQuestionVoice);
-        tvQuestionText.setText(questionText);
+        ivQuestionImage = findViewById(R.id.ivQuestionImage);
+
+        // Don't set text yet - load from database to get transcribed text if available
+        // tvQuestionText.setText(questionText);
 
         recyclerViewExpertAnswers = findViewById(R.id.recyclerViewExpertAnswers);
         recyclerViewOthersAnswers = findViewById(R.id.recyclerViewOthersAnswers);
         emptyState = findViewById(R.id.emptyState);
 
-        // Load and display the question with farmer name
+        // Load and display the question with farmer name (will set question text)
         loadQuestionInfo();
 
         // Setup Expert Answers RecyclerView
@@ -88,6 +95,14 @@ public class AnswersActivity extends AppCompatActivity {
         markAnswersAsViewed();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload question info in case transcription completed
+        loadQuestionInfo();
+        loadAnswers();
+    }
+
     private void loadQuestionInfo() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             com.agriminds.data.entity.Question question = database.questionDao().getQuestionById(questionId);
@@ -95,6 +110,12 @@ public class AnswersActivity extends AppCompatActivity {
 
             // Store audio path
             questionAudioPath = question != null ? question.getAudioPath() : null;
+
+            // Get the actual question text from database (may have been transcribed)
+            String actualQuestionText = question != null ? question.getQuestionText() : "";
+
+            // Get the image path from database
+            String questionImagePath = question != null ? question.getImageUrl() : null;
 
             // Check if current expert has answered this question
             boolean hasOwnAnswer = false;
@@ -109,6 +130,32 @@ public class AnswersActivity extends AppCompatActivity {
 
             boolean finalHasOwnAnswer = hasOwnAnswer;
             runOnUiThread(() -> {
+                // Set question text from database (shows transcribed text if available)
+                if (actualQuestionText != null && !actualQuestionText.isEmpty()) {
+                    // If still showing [Voice Question], add a note for the user
+                    if ("[Voice Question]".equals(actualQuestionText)) {
+                        tvQuestionText.setText("Voice Question (Transcribing your audio...)");
+                    } else {
+                        tvQuestionText.setText(actualQuestionText);
+                    }
+                }
+
+                // Show question image if exists
+                if (questionImagePath != null && !questionImagePath.isEmpty()) {
+                    ivQuestionImage.setVisibility(View.VISIBLE);
+                    if (questionImagePath.startsWith("http")) {
+                        Glide.with(AnswersActivity.this)
+                                .load(questionImagePath)
+                                .into(ivQuestionImage);
+                    } else {
+                        Glide.with(AnswersActivity.this)
+                                .load(new File(questionImagePath))
+                                .into(ivQuestionImage);
+                    }
+                } else {
+                    ivQuestionImage.setVisibility(View.GONE);
+                }
+
                 // Show play button if question has audio
                 if (questionAudioPath != null && !questionAudioPath.isEmpty()) {
                     btnPlayQuestionVoice.setVisibility(View.VISIBLE);

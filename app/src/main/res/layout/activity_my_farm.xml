@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="16dp"
@@ -21,147 +22,73 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
 
+        <!-- To-Do List Section -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Farm Information"
+                    android:text="📝 My Farm To-Do List"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:layout_marginBottom="8dp"/>
-                <TextView
-                    android:id="@+id/text_farm_name"
-                    android:layout_width="wrap_content"
+                    android:textColor="#2E7D32"
+                    android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Farm Name: Green Valley Farm"
-                    android:layout_marginBottom="4dp"/>
-                <TextView
-                    android:id="@+id/text_farm_area"
-                    android:layout_width="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <EditText
+                        android:id="@+id/etNewTask"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Add new task..."
+                        android:inputType="textCapSentences"
+                        android:background="@android:drawable/edit_text"
+                        android:padding="8dp"/>
+
+                    <Button
+                        android:id="@+id/btnAddTask"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add"
+                        android:layout_marginStart="8dp"
+                        android:backgroundTint="#2E7D32"/>
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvToDoList"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Total Area: 5.2 acres"
-                    android:layout_marginBottom="4dp"/>
+                    android:nestedScrollingEnabled="false"/>
+
                 <TextView
-                    android:id="@+id/text_farm_location"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tvEmptyTodo"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Location: Dhaka, Bangladesh"/>
+                    android:text="No tasks yet."
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:textColor="#757575"
+                    android:visibility="gone"/>
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Current Crops"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rice"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Area: 2.5 acres • Planted: 45 days ago"
-                    android:textSize="14sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Status: Growing well"
-                    android:textColor="#4CAF50"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wheat"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Area: 1.5 acres • Planted: 30 days ago"
-                    android:textSize="14sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Status: Needs irrigation"
-                    android:textColor="#FF9800"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Vegetables (Mixed)"
-                    android:textStyle="bold"
-                    android:textSize="16sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Area: 1.2 acres • Planted: 20 days ago"
-                    android:textSize="14sp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Status: Excellent"
-                    android:textColor="#4CAF50"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <Button
-            android:id="@+id/btn_add_crop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="+ Add New Crop"
-            android:layout_marginBottom="8dp"/>
-
-        <Button
-            android:id="@+id/btn_view_history"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="View Harvest History"
-            style="?android:attr/borderlessButtonStyle"/>
 
     </LinearLayout>
 </ScrollView>

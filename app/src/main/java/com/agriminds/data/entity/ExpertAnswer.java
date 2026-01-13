@@ -14,6 +14,7 @@ public class ExpertAnswer {
     private String answerText;
     private String answerType; // "EXPERT" or "AI"
     private String audioPath; // Path to recorded audio file
+    private String imagePath; // Path to answer image file
     private long createdAt;
 
     public ExpertAnswer() {
@@ -83,5 +84,13 @@ public class ExpertAnswer {
 
     public void setAudioPath(String audioPath) {
         this.audioPath = audioPath;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

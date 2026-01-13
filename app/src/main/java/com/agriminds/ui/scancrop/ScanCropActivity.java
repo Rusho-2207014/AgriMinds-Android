@@ -36,7 +36,17 @@ public class ScanCropActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 100;
     private static final int REQUEST_IMAGE_CAPTURE = 101;
     private static final int REQUEST_GALLERY = 102;
-    private static final String GEMINI_API_KEY = "AIzaSyBgcPsiq9SfdmUuOb6KgQiwawOTSp1tXH0";
+
+    // API key - In production, move to BuildConfig or secure backend
+    private String getApiKey() {
+        // Rotate between multiple keys to avoid quota limits
+        String[] keys = {
+                "AIzaSyC90368I-saYiOPOd9DH5Ean3NNS1K8RQo",
+                "AIzaSyAx-IxNj1EbbOAKIiD8PiTF6t6EhQml4zY",
+                "AIzaSyC90368I-saYiOPOd9DH5Ean3NNS1K8RQo"
+        };
+        return keys[(int) (System.currentTimeMillis() / 1000) % keys.length];
+    }
 
     private ImageView imageCrop;
     private Button btnTakePhoto, btnSelectGallery, btnAnalyze;
@@ -189,7 +199,7 @@ public class ScanCropActivity extends AppCompatActivity {
                 // Make API call
                 URL url = new URL(
                         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="
-                                + GEMINI_API_KEY);
+                                + getApiKey());
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json");
